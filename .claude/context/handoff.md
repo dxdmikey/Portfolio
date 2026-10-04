@@ -4,12 +4,18 @@
 > Ravi made, and what's left. Deep technical docs live in the other `.claude/context/*.md` files.
 
 ## TL;DR
-- **v3 "The Voyage" (Ravi's 20-point review) is built and waiting for Ravi's review** on the local mock.
-- **NOT shipped yet.** There is no GitHub repo, no Vercel deploy, and no commits beyond create-next-app's
-  initial commit (`2e9ac9b`). Everything else is uncommitted in the working tree.
-- **Ravi's one thing:** review the local mock (`npm run build && npx serve out -l 4180`, then http://localhost:4180). The Web3Forms access key is already set in `src/content/transmission.ts`
-  (`WEB3FORMS_ACCESS_KEY`), so the contact form really sends; to change or rotate it, edit that constant. After the first deploy, send one real test message from the live site.
-- **Next step:** apply his feedback, or on an explicit "ship it" start the ship phase below.
+- **SHIPPED 2026-10-04.** Live: https://kadwasra.vercel.app · Repo: https://github.com/dxdmikey/Portfolio (public, `main`).
+  Vercel project `kadwasra` (account `papulaal420-1844`), linked locally in `.vercel/`. Deployed with `vercel deploy --prod`.
+- **Auto-deploy from GitHub is NOT connected yet**: `vercel link` failed with "add a Login Connection to your GitHub
+  account first". Ravi must connect GitHub in Vercel (Account Settings > Authentication), then run
+  `vercel git connect https://github.com/dxdmikey/Portfolio`. Until then, every change ships by `git push` + `vercel deploy --prod`.
+- **Configurable without code:** `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_WEB3FORMS_KEY` (see `.env.example`); defaults
+  live in `content/profile.ts` and `content/transmission.ts`. Resume links derive from `profile.ts`.
+- **Still to do:** Ravi sends one real test message from the live contact form; listen to the audio on his phone.
+- Git author is set per-repo to `Kadwasra Ravi Kumar <92010385+dxdmikey@users.noreply.github.com>`. `gh` lives at
+  `C:\Program Files\GitHub CLI\gh.exe` (not on PATH in old shells); `.vercelignore` keeps `_source/` out of CLI uploads.
+- Changes after v3: Retail Lakehouse replaced by the Enterprise Data & Analytics Platform (resume + site); the boot
+  screen got a pure-CSS space sky (`.boot-space`).
 
 ## Who / what
 - **Owner:** Kadwasra Ravi Kumar (GitHub `dxdmikey`). Data & AI Engineer, Hyderabad.
