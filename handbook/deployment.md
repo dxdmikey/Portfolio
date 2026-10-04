@@ -4,13 +4,6 @@ Your site is hosted for free on Vercel (Hobby plan). The code lives on GitHub in
 
 Status: shipped on 2026-10-04. The first-time steps below are already done; they stay here for reference.
 
-## Turn on auto-deploy (one-time, still to do)
-The GitHub repo is not yet connected to Vercel, so a `git push` alone does not redeploy yet.
-1. Vercel dashboard > your avatar > Account Settings > Authentication > connect **GitHub** (the dxdmikey account).
-2. In the project folder: `vercel git connect https://github.com/dxdmikey/Portfolio`
-   (or in the dashboard: project `kadwasra` > Settings > Git > Connect Git Repository).
-Until then, after `git push`, also run `vercel deploy --prod`.
-
 ## First time only (done)
 In PowerShell, inside the project folder:
 ```powershell
@@ -52,7 +45,8 @@ You can also skip the CLI and use the Vercel dashboard: New Project, import the 
    git commit -m "Describe what you changed"
    git push
    ```
-Once auto-deploy is connected (see above), Vercel notices the push and deploys in about a minute. Until then, also run `vercel deploy --prod`.
+Vercel notices the push and deploys in about a minute (GitHub is connected to the Vercel project). Push a
+different branch instead of `main` to get a private preview URL without touching the live site.
 
 ## Check that it deployed
 - Vercel dashboard > project `kadwasra` > Deployments: look for a green "Ready".

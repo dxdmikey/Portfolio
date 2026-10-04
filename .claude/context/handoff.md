@@ -6,9 +6,8 @@
 ## TL;DR
 - **SHIPPED 2026-10-04.** Live: https://kadwasra.vercel.app · Repo: https://github.com/dxdmikey/Portfolio (public, `main`).
   Vercel project `kadwasra` (account `papulaal420-1844`), linked locally in `.vercel/`. Deployed with `vercel deploy --prod`.
-- **Auto-deploy from GitHub is NOT connected yet**: `vercel link` failed with "add a Login Connection to your GitHub
-  account first". Ravi must connect GitHub in Vercel (Account Settings > Authentication), then run
-  `vercel git connect https://github.com/dxdmikey/Portfolio`. Until then, every change ships by `git push` + `vercel deploy --prod`.
+- **Auto-deploy is connected** (Ravi installed the Vercel GitHub app on 2026-10-04): every push to `main` deploys to
+  production; other branches get preview URLs. No `vercel deploy` needed.
 - **Configurable without code:** `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_WEB3FORMS_KEY` (see `.env.example`); defaults
   live in `content/profile.ts` and `content/transmission.ts`. Resume links derive from `profile.ts`.
 - **Still to do:** Ravi sends one real test message from the live contact form; listen to the audio on his phone.
