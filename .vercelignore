@@ -1,0 +1,12 @@
+# Files the Vercel CLI must never upload (private sources, local secrets, build output).
+_source/
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+out/
+test-results/
+playwright-report/
+blob-report/
+__pycache__/
