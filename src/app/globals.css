@@ -1,26 +1,758 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ── Theme switch: next-themes writes data-theme="dark|light" on <html> ── */
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
+/*
+ * Palette — "deep space arcade".
+ *   void      page background (indigo, never pure black)
+ *   nebula    raised panels;  nebula-2 = hover/inset
+ *   starlight body text;      dust = secondary text
+ *   plasma    identity / primary links      (cyan)
+ *   xp        progress, success, completed  (lime)
+ *   coin      headings, active state        (amber)
+ *   warp      side quests, rare, magenta accents
+ */
+:root,
+[data-theme="dark"] {
+  --void: #0a0b1e;
+  --nebula: #16183d;
+  --nebula-2: #20235a;
+  --grid: #2c3070;
+  --starlight: #e8e9ff;
+  --dust: #9a9ed6;
+  --plasma: #3ef0ff;
+  --xp: #9bff4a;
+  --coin: #ffc93c;
+  --warp: #ff4fd8;
+  --danger: #ff5a6e;
+  --on-accent: #0a0b1e;
+  --scanline-opacity: 0.07;
+  --star: #ffffff;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --void: #f1f0ff;
+  --nebula: #ffffff;
+  --nebula-2: #e6e4ff;
+  --grid: #c9c6f2;
+  --starlight: #17183a;
+  --dust: #4c4f86;
+  --plasma: #00739e;
+  --xp: #2d7a0c;
+  --coin: #925f00;
+  --warp: #a8128a;
+  --danger: #c0182f;
+  --on-accent: #ffffff;
+  --scanline-opacity: 0;
+  --star: #6d6ab8;
+  color-scheme: light;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-void: var(--void);
+  --color-nebula: var(--nebula);
+  --color-nebula-2: var(--nebula-2);
+  --color-grid: var(--grid);
+  --color-starlight: var(--starlight);
+  --color-dust: var(--dust);
+  --color-plasma: var(--plasma);
+  --color-xp: var(--xp);
+  --color-coin: var(--coin);
+  --color-warp: var(--warp);
+  --color-danger: var(--danger);
+  --color-on-accent: var(--on-accent);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --font-pixel: var(--font-press-start), ui-monospace, monospace;
+  --font-body: var(--font-chakra), ui-sans-serif, system-ui, sans-serif;
+
+  /* Pixel type scale — Press Start 2P only renders crisply at multiples of 8px. */
+  --text-px-xs: 0.5rem;
+  --text-px-sm: 0.625rem;
+  --text-px-md: 0.75rem;
+  --text-px-lg: 1rem;
+  --text-px-xl: 1.5rem;
+  --text-px-2xl: 2rem;
+  --text-px-3xl: 3rem;
+
+  --shadow-pixel: 4px 4px 0 0 var(--grid);
+  --shadow-pixel-sm: 2px 2px 0 0 var(--grid);
+
+  --animate-blink: blink 1.06s steps(1) infinite;
+  --animate-float: float 3.2s ease-in-out infinite;
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6.5rem;
+  }
+
+  body {
+    background: var(--void);
+    color: var(--starlight);
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--plasma);
+    color: var(--on-accent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--coin);
+    outline-offset: 3px;
+  }
+
+  /* CRT scanlines — dark mode only, purely decorative. */
+  body::after {
+    content: "";
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    opacity: var(--scanline-opacity);
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      #000 2px,
+      #000 3px
+    );
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
+
+@layer utilities {
+  /* Chunky dashed divider between "screens", as in the reference. */
+  .pixel-rule {
+    height: 4px;
+    background-image: linear-gradient(to right, var(--plasma) 60%, transparent 0);
+    background-size: 14px 4px;
+  }
+  .text-glow {
+    text-shadow:
+      0 0 12px color-mix(in srgb, currentColor 55%, transparent),
+      3px 3px 0 color-mix(in srgb, var(--void) 80%, transparent);
+  }
+  [data-theme="light"] .text-glow {
+    text-shadow: 3px 3px 0 var(--grid);
+  }
+  .pixelated {
+    image-rendering: pixelated;
+  }
+}
+
+/* ───────────────────────── Signature moments (ui-designer) ───────────────────────── */
+
+/* Boot overlay: server-rendered, hidden before first paint on repeat visits
+   (layout's inline script sets html[data-booted]). */
+[data-booted] .boot-overlay {
+  display: none;
+}
+
+.boot-overlay.is-leaving {
+  opacity: 0;
+  transition: opacity 260ms steps(4);
+}
+
+/* BIOS lines appear one by one — pure CSS so it runs before hydration. */
+.boot-line {
+  opacity: 0;
+  animation: boot-line 1ms linear forwards;
+  animation-delay: var(--boot-delay, 0ms);
+}
+
+.boot-bar {
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: boot-bar 1.4s steps(12) forwards;
+}
+
+@keyframes boot-line {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes boot-bar {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Boot overlay sky: CH0's violet space (palette from content/scenes.ts), pure CSS so it paints
+   before hydration and stays cheap on phones (one painted background, no masks). Layers, top
+   first: moon craters, moon, planet shading, planet + rim glow, a dark haze that keeps the centred
+   text calm, four tiled star fields, nebula haze, sky gradient. ::after = a few twinkling stars
+   near the edges (opacity-only animation). */
+.boot-space {
+  --boot-sky-top: #07051a;
+  --boot-sky-bottom: #1d0f4a;
+  --boot-glow: #a467ff;
+  --boot-planet: #3a1478;
+  --boot-planet-lit: #5a24a8;
+  --boot-moon: #6f63c4;
+  --boot-moon-lit: #d6d0ff;
+  --boot-moon-x: 14%;
+  --boot-moon-y: 16%;
+  --boot-planet-at: calc(100% - 30px) calc(100% + 70px);
+  background:
+    radial-gradient(circle at calc(var(--boot-moon-x) - 6px) calc(var(--boot-moon-y) + 4px), var(--boot-moon) 0 4px, transparent 5px),
+    radial-gradient(circle at calc(var(--boot-moon-x) - 4px) calc(var(--boot-moon-y) - 7px), var(--boot-moon) 0 3px, transparent 4px),
+    radial-gradient(circle at calc(var(--boot-moon-x) - 5px) calc(var(--boot-moon-y) - 5px), var(--boot-moon-lit) 0 19px, transparent 20px),
+    radial-gradient(circle at var(--boot-moon-x) var(--boot-moon-y), var(--boot-moon) 0 26px, transparent 27px),
+    radial-gradient(circle at calc(100% - 60px) calc(100% + 40px), var(--boot-planet-lit) 0 136px, transparent 137px),
+    radial-gradient(circle at var(--boot-planet-at), var(--boot-planet) 0 180px, color-mix(in srgb, var(--boot-glow) 70%, transparent) 181px 184px, transparent 185px),
+    radial-gradient(ellipse min(620px, 100vw) 300px at 50% 50%, color-mix(in srgb, var(--boot-sky-top) 92%, transparent) 40%, transparent 100%),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px) 13px 29px / 97px 89px,
+    radial-gradient(circle, #cfc8ff 0 1px, transparent 1.5px) 61px 7px / 131px 113px,
+    radial-gradient(circle, #fff 0 1.5px, transparent 2px) 101px 71px / 211px 187px,
+    radial-gradient(circle, #9fe8ff 0 1px, transparent 1.5px) 37px 143px / 173px 157px,
+    radial-gradient(ellipse 60% 45% at 18% 72%, color-mix(in srgb, var(--boot-glow) 22%, transparent), transparent 70%),
+    radial-gradient(ellipse 55% 40% at 82% 22%, color-mix(in srgb, var(--warp) 14%, transparent), transparent 70%),
+    linear-gradient(to bottom, var(--boot-sky-top), var(--boot-sky-bottom));
+}
+
+.boot-space::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 7% 34%, var(--plasma) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 27% 8%, #fff 0 1.5px, transparent 2px),
+    radial-gradient(circle at 63% 6%, var(--coin) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 91% 13%, #fff 0 1.5px, transparent 2px),
+    radial-gradient(circle at 95% 47%, var(--plasma) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 6% 88%, var(--coin) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 38% 93%, #fff 0 1.5px, transparent 2px),
+    radial-gradient(circle at 72% 84%, var(--plasma) 0 1.5px, transparent 2px);
+  animation: boot-twinkle 2.2s steps(2) infinite;
+}
+
+/* An occasional shooting star across the top of the title card. */
+.boot-shooting-star {
+  position: fixed;
+  top: 14%;
+  left: -160px;
+  width: 140px;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(to right, transparent, #fff);
+  opacity: 0;
+  transform: rotate(16deg);
+  animation: boot-shoot 7s linear 1.6s infinite;
+}
+
+@keyframes boot-twinkle {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes boot-shoot {
+  0% {
+    opacity: 0;
+    transform: rotate(16deg) translateX(0);
+  }
+  2% {
+    opacity: 1;
+  }
+  14% {
+    opacity: 0;
+    transform: rotate(16deg) translateX(calc(100vw + 320px));
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(16deg) translateX(calc(100vw + 320px));
+  }
+}
+
+/* Pixel sprite: periodic eye blink + a shadow that shrinks as the sprite rises. */
+.sprite-blink {
+  animation: sprite-blink 4.6s steps(1) infinite;
+}
+
+.sprite-shadow {
+  transform-origin: center;
+  animation: sprite-shadow 3.2s ease-in-out infinite;
+}
+
+@keyframes sprite-blink {
+  0%,
+  95%,
+  100% {
+    opacity: 1;
+  }
+  96%,
+  98% {
+    opacity: 0;
+  }
+}
+
+@keyframes sprite-shadow {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleX(0.72);
+    opacity: 0.25;
+  }
+}
+
+.scroll-hint {
+  animation: scroll-hint 1.6s steps(2) infinite;
+}
+
+@keyframes scroll-hint {
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-line,
+  .boot-bar {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .sprite-blink,
+  .sprite-shadow,
+  .scroll-hint,
+  .boot-space::after {
+    animation: none;
+  }
+  .boot-shooting-star {
+    display: none;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* 8-bit notches over the XP fill. */
+  .xp-notches {
+    background-image: linear-gradient(to right, transparent 85%, var(--void) 0);
+    background-size: 10px 100%;
+  }
+}
+
+/* ── Quick view: <html data-quick> swaps the story for the compact summary ── */
+[data-quick] .story-only,
+[data-quick] .boot-overlay {
+  display: none !important;
+}
+:root:not([data-quick]) .quick-only {
+  display: none !important;
+}
+
+/* ───────────────────── The Voyage: scene, FX, launchpad, transmission (ui-designer) ───────────────────── */
+
+/* Screen shake (FxLayer toggles html[data-shake]); story content only, never the HUD. */
+[data-shake] #main,
+[data-shake] #launchpad {
+  animation: fx-shake 360ms steps(6) both;
+}
+@keyframes fx-shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-6px, 3px);
+  }
+  40% {
+    transform: translate(5px, -4px);
+  }
+  60% {
+    transform: translate(-4px, -2px);
+  }
+  80% {
+    transform: translate(3px, 4px);
+  }
+}
+
+/* Countdown digits slam in. */
+.countdown-step {
+  animation: countdown-pop 600ms steps(6) both;
+}
+@keyframes countdown-pop {
+  0% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  45%,
+  85% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* Poke-able name: wave through all letters or one big bounce; hover wobble on desktop. */
+.name-letter.is-wave {
+  animation: letter-hop 520ms steps(6) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+.name-letter.is-bounce {
+  animation: letter-bounce 700ms steps(8) both;
+}
+@keyframes letter-hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-14px);
+  }
+  70% {
+    transform: translateY(3px);
+  }
+}
+@keyframes letter-bounce {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  30% {
+    transform: translateY(-32px) rotate(-12deg);
+  }
+  55% {
+    transform: translateY(0) rotate(8deg);
+  }
+  75% {
+    transform: translateY(-10px) rotate(0);
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .name-wrap:hover .name-letter:not(.is-wave):not(.is-bounce) {
+    animation: letter-wobble 900ms steps(4) infinite;
+    animation-delay: calc(var(--i, 0) * 60ms);
+  }
+}
+@keyframes letter-wobble {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-6deg) translateY(-2px);
+  }
+  75% {
+    transform: rotate(6deg) translateY(1px);
+  }
+}
+
+/* Pixel Ravi waves, and his speech bubble trails two pixel dots. */
+.sprite-wave {
+  transform-origin: 50% 90%;
+  animation: sprite-wave 800ms steps(8) both;
+}
+@keyframes sprite-wave {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20%,
+  60% {
+    transform: rotate(-10deg);
+  }
+  40%,
+  80% {
+    transform: rotate(10deg);
+  }
+}
+.speech-bubble::before,
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  background: var(--coin);
+}
+.speech-bubble::before {
+  top: calc(100% + 4px);
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+}
+.speech-bubble::after {
+  top: calc(100% + 16px);
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+}
+
+/* Hidden constellation: faint twinkle, lines draw in when complete. */
+.mystery-star {
+  animation: mystery-twinkle 2.8s steps(2) infinite;
+  animation-delay: var(--twinkle-delay, 0s);
+}
+@keyframes mystery-twinkle {
+  50% {
+    opacity: 0.45;
+  }
+}
+.constellation-line {
+  stroke-dasharray: 4 4;
+  animation: constellation-draw 900ms steps(9) both;
+}
+@keyframes constellation-draw {
+  from {
+    stroke-dashoffset: 120;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+/* Launch tower: beacon blink, rocket rumble → fly off, and drop back in on relaunch. */
+.tower-beacon {
+  animation: blink 1.2s steps(1) infinite;
+}
+.ship-flame {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: top;
+}
+.rocket-launch .ship-flame,
+.player-ship[data-thrust="true"] .ship-flame {
+  opacity: 1;
+  animation: flame-flicker 120ms steps(2) infinite;
+}
+@keyframes flame-flicker {
+  50% {
+    transform: translateY(1px) scaleY(0.7);
+    opacity: 0.75;
+  }
+}
+.rocket-launch {
+  animation:
+    rocket-rumble 450ms steps(9) both,
+    rocket-fly 1100ms 450ms cubic-bezier(0.55, 0, 0.9, 0.35) forwards;
+}
+@keyframes rocket-rumble {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-2px, 1px);
+  }
+  50% {
+    transform: translate(2px, -1px);
+  }
+  75% {
+    transform: translate(-1px, -1px);
+  }
+}
+@keyframes rocket-fly {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-120vh);
+  }
+}
+.rocket-land {
+  animation: rocket-land 500ms steps(8) both;
+}
+@keyframes rocket-land {
+  0% {
+    transform: translateY(-60vh);
+  }
+  80% {
+    transform: translateY(4px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Player ship: appears once launched / past the launchpad. */
+.player-ship {
+  opacity: 0;
+  transition: opacity 400ms steps(4);
+}
+.player-ship[data-shown="true"] {
+  opacity: 1;
+}
+
+/* Radio dish: resting tilt, swings up to aim; beam and square signal rings fire upward. */
+.dish-bowl {
+  transform: rotate(-28deg);
+  transition: transform 600ms steps(6);
+}
+.dish-bowl.is-aimed {
+  transform: rotate(0);
+}
+.signal-beam {
+  transform-origin: bottom;
+  animation: signal-beam 700ms 500ms steps(7) 2 both;
+}
+@keyframes signal-beam {
+  0% {
+    transform: scaleY(0);
+    opacity: 1;
+  }
+  60% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(1) translateY(-40%);
+    opacity: 0;
+  }
+}
+.signal-ring {
+  opacity: 0;
+  animation: signal-ring 1.2s 500ms steps(8) 3 both;
+}
+@keyframes signal-ring {
+  0% {
+    transform: translateY(0) scale(0.4);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-96px) scale(2.2);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .countdown-step,
+  .name-letter,
+  .sprite-wave,
+  .mystery-star,
+  .constellation-line,
+  .tower-beacon,
+  .rocket-land,
+  .signal-beam,
+  .signal-ring,
+  [data-shake] #main,
+  [data-shake] #launchpad {
+    animation: none;
+  }
+  .rocket-launch {
+    animation: none;
+    visibility: hidden;
+  }
+  .dish-bowl {
+    transition: none;
+  }
+  .signal-ring,
+  .signal-beam {
+    opacity: 0;
+  }
+}
+
+/* ── B4b: contact link cards ping when a signal goes out ───────────────────── */
+.link-ping {
+  animation: link-ping 360ms steps(4) 1 both;
+}
+@keyframes link-ping {
+  0% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-ping {
+    animation: none;
+  }
+}
+
+/* ───────────────── Scene glow (B3 · sky): chapter colour on DOM accents ─────────────────
+   The sky loop (scene/use-sky-loop.ts) writes the blended chapter glow to --scene-glow on <html>
+   as you scroll. Accents only: text colours stay on tokens, so contrast never depends on it. */
+h2[id$="-title"] .text-glow {
+  text-shadow:
+    0 0 14px color-mix(in srgb, var(--scene-glow, currentColor) 70%, transparent),
+    3px 3px 0 color-mix(in srgb, var(--void) 80%, transparent);
+}
+[data-theme="light"] h2[id$="-title"] .text-glow {
+  text-shadow: 3px 3px 0 color-mix(in srgb, var(--scene-glow, var(--grid)) 30%, var(--grid));
+}
+/* The HUD's dashed underline (the only sticky header) follows the chapter colour. */
+header.sticky > .pixel-rule {
+  background-image: linear-gradient(to right, var(--scene-glow, var(--plasma)) 60%, transparent 0);
+}
+/* ─────────────────────────────── end scene glow (B3) ─────────────────────────────── */
+
+/* ─────────────── Refinery conveyor (C2 · components/shared/refinery/conveyor.tsx) ───────────────
+   A striped belt along the bottom of the track. It scrolls (8-bit steps) while the belt is timed;
+   --belt-loop is set per level so faster levels scroll faster. Still under reduced motion. */
+.refinery-belt::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 8px;
+  background-image: repeating-linear-gradient(90deg, var(--grid) 0 8px, transparent 8px 16px);
+  border-top: 2px solid var(--grid);
+}
+.refinery-belt[data-moving="true"]::after {
+  animation: refinery-belt var(--belt-loop, 500ms) steps(4) infinite;
+}
+@keyframes refinery-belt {
+  to {
+    background-position: 16px 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .refinery-belt::after {
+    animation: none !important;
+  }
+}
+/* ───────────────────────────────── end refinery conveyor (C2) ───────────────────────────────── */

@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +40,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# private source material (raw photo, old CV, reference recording) — never committed
+/_source/
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+
+# python bytecode (from .claude skill scripts)
+__pycache__/
+
+# local Claude Code settings
+.claude/settings.local.json

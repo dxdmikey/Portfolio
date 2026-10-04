@@ -1,0 +1,248 @@
+/* Resume paper — deliberately independent of the game theme (white, black, serif, A4). */
+.root {
+  --ink: #000;
+  --blue: #2f5496;
+  min-height: 100vh;
+  padding: 0 0 48px;
+  color: var(--ink);
+  font-family: "Times New Roman", Times, "Liberation Serif", serif;
+  font-size: 10.5pt;
+  line-height: 1.28;
+  color-scheme: light;
+}
+
+:global(body):has(.root) {
+  background: #3b3d6b;
+  color: #000;
+  overflow-x: auto;
+}
+:global(body):has(.root)::after {
+  display: none;
+}
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #16183d;
+  border-bottom: 2px solid #2c3070;
+  font-family: system-ui, "Segoe UI", sans-serif;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 2px solid #3ef0ff;
+  color: #3ef0ff !important;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.btn:hover,
+.btn:focus-visible {
+  background: #3ef0ff;
+  color: #0a0b1e !important;
+  text-decoration: none !important;
+}
+.btnPrimary {
+  border-color: #ffc93c;
+  color: #0a0b1e !important;
+  background: #ffc93c;
+}
+.btnPrimary:hover,
+.btnPrimary:focus-visible {
+  background: #fff;
+  border-color: #fff;
+  color: #0a0b1e !important;
+}
+
+.paper {
+  box-sizing: border-box;
+  width: 210mm;
+  min-height: 297mm;
+  margin: 24px auto 0;
+  padding: 14mm 16mm;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.paper a {
+  color: var(--blue);
+  text-decoration: none;
+}
+.paper a:hover {
+  text-decoration: underline;
+}
+
+.head {
+  padding-left: 28mm;
+  margin-bottom: 6pt;
+}
+.name {
+  margin: 0;
+  font-size: 22pt;
+  line-height: 1.15;
+  font-weight: 700;
+}
+.role {
+  margin: 0;
+  font-size: 13pt;
+  font-weight: 700;
+  color: var(--blue);
+}
+.contact {
+  margin: 1pt 0 0;
+  font-size: 10pt;
+  white-space: nowrap;
+}
+.contact b {
+  margin-right: 3pt;
+}
+.contact span + span {
+  margin-left: 22pt;
+}
+
+.h2 {
+  margin: 12pt 0 3pt;
+  font-size: 15pt;
+  line-height: 1.2;
+  font-weight: 700;
+  break-after: avoid;
+}
+.p {
+  margin: 0;
+}
+.company {
+  margin: 0;
+  font-weight: 700;
+  break-after: avoid;
+}
+.roleLine {
+  margin: 0 0 3pt;
+  text-decoration: underline;
+  break-after: avoid;
+}
+.roleBlock + .roleBlock {
+  margin-top: 8pt;
+}
+.list {
+  margin: 0;
+  padding-left: 14pt;
+  list-style: disc;
+}
+.list li {
+  break-inside: avoid;
+  padding-left: 4pt;
+}
+.project {
+  margin-top: 2pt;
+  break-inside: avoid;
+}
+.projectTitle {
+  margin: 0 0 1pt 14pt;
+  font-weight: 700;
+  break-after: avoid;
+}
+.nested {
+  margin: 0;
+  padding-left: 40pt;
+  list-style: disc;
+}
+.nested li {
+  break-inside: avoid;
+  padding-left: 2pt;
+}
+.italic {
+  font-style: italic;
+}
+.skills {
+  margin: 0;
+  padding: 0 0 0 24pt;
+  list-style: none;
+}
+.skills li {
+  padding-left: 12pt;
+  text-indent: -12pt;
+  break-inside: avoid;
+}
+.numbered {
+  margin-bottom: 6pt;
+}
+.numbered p {
+  margin: 0;
+  break-after: avoid;
+}
+
+@media (max-width: 900px) {
+  .paper {
+    margin-top: 12px;
+  }
+}
+
+/* Phones and small tablets: the A4 sheet reflows to the screen instead of scrolling sideways.
+   Screen only: print (and the PDF export) keeps the A4 layout above. */
+@media screen and (max-width: 840px) {
+  .root {
+    font-size: 11.5pt;
+    line-height: 1.4;
+  }
+  .paper {
+    width: auto;
+    min-height: 0;
+    margin: 12px 8px 0;
+    padding: 24px 16px;
+    overflow-wrap: anywhere;
+  }
+  .head {
+    padding-left: 0;
+  }
+  .contact {
+    white-space: normal;
+  }
+  .contact span {
+    display: block;
+  }
+  .contact span + span {
+    margin-left: 0;
+  }
+  .toolbar {
+    padding: 10px 8px;
+  }
+}
+
+@page {
+  size: A4;
+  margin: 14mm 16mm;
+  background: #fff;
+}
+
+@media print {
+  :global(html):has(.root) {
+    color-scheme: light !important;
+    background: #fff !important;
+  }
+  .root {
+    padding: 0;
+    min-height: 0;
+    background: #fff;
+  }
+  :global(body):has(.root) {
+    background: #fff;
+  }
+  .toolbar {
+    display: none;
+  }
+  .paper {
+    width: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+}
